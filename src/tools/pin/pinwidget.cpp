@@ -18,7 +18,7 @@
 #include <QWheelEvent>
 
 namespace {
-constexpr int MARGIN = 7;
+constexpr int MARGIN = 2;
 constexpr int BLUR_RADIUS = 2 * MARGIN;
 constexpr qreal STEP = 0.03;
 constexpr qreal MIN_SIZE = 100.0;
@@ -33,23 +33,13 @@ PinWidget::PinWidget(const QPixmap& pixmap,
   , m_label(new QLabel())
   , m_shadowEffect(new QGraphicsDropShadowEffect(this))
 {
-    setWindowIcon(QIcon(GlobalValues::iconPath()));
-    setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
     setFocusPolicy(Qt::StrongFocus);
-    // set the bottom widget background transparent
     setAttribute(Qt::WA_TranslucentBackground);
     setAttribute(Qt::WA_DeleteOnClose);
-    ConfigHandler conf;
-    m_baseColor = conf.uiColor();
-    m_hoverColor = conf.contrastUiColor();
-
     m_layout->setContentsMargins(MARGIN, MARGIN, MARGIN, MARGIN);
 
-    m_shadowEffect->setColor(m_baseColor);
-    m_shadowEffect->setBlurRadius(BLUR_RADIUS);
-    m_shadowEffect->setOffset(0, 0);
-    setGraphicsEffect(m_shadowEffect);
     setWindowOpacity(m_opacity);
+    setWindowTitle("float");
 
     m_label->setPixmap(m_pixmap);
     m_layout->addWidget(m_label);
@@ -68,9 +58,6 @@ PinWidget::PinWidget(const QPixmap& pixmap,
       static_cast<int>(static_cast<double>(MARGIN) * devicePixelRatio);
     QRect adjusted_pos = geometry + QMargins(margin, margin, margin, margin);
     setGeometry(adjusted_pos);
-#if defined(Q_OS_LINUX)
-    setWindowFlags(Qt::X11BypassWindowManagerHint);
-#endif
 
 #if defined(Q_OS_MACOS) || defined(Q_OS_LINUX)
     if (currentScreen != nullptr) {
